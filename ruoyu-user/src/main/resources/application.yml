@@ -1,0 +1,41 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: ruoyu-user
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: ${spring.application.name}
+      discovery:
+        server-addr: ${spring.cloud.nacos.config.server-addr}
+        namespace: ${spring.application.name}
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/ruoyu_user?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8&autoReconnect=true&useSSL=false&allowMultiQueries=true
+    username: root
+    password: root
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 60000
+      max-lifetime: 600000
+      connection-timeout: 30000
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: root
+  config:
+    import: nacos:application.yml
+
+logging:
+  file:
+    name: logback-spring.xml
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.npc.ruoyu.user.domain.po
+  configuration:
+    map-underscore-to-camel-case: true
