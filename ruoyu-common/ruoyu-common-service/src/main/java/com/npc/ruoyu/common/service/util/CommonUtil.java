@@ -1,12 +1,7 @@
 package com.npc.ruoyu.common.service.util;
 
-import com.npc.ruoyu.common.service.model.Snowflake;
+import com.npc.ruoyu.common.core.model.Snowflake;
 import org.springframework.util.ObjectUtils;
-
-import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author Ted

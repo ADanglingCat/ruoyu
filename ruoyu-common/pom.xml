@@ -18,6 +18,8 @@
         <module>ruoyu-common-nacos</module>
         <module>ruoyu-common-sentinel</module>
         <module>ruoyu-common-mq</module>
+        <module>ruoyu-common-product</module>
+        <module>ruoyu-common-core</module>
     </modules>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

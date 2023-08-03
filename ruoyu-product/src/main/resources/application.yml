@@ -1,0 +1,43 @@
+server:
+  port: 8092
+  servlet:
+    context-path: /${spring.application.name}
+spring:
+  application:
+    name: ruoyu-product
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: ruoyu
+      discovery:
+        server-addr: ${spring.cloud.nacos.config.server-addr}
+        namespace: ruoyu
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/ruoyu_product?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8&autoReconnect=true&useSSL=false&allowMultiQueries=true
+    username: root
+    password: root
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 60000
+      max-lifetime: 600000
+      connection-timeout: 30000
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: root
+  config:
+    import: nacos:${spring.application.name}.yml
+
+logging:
+  file:
+    name: logback-spring.xml
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.npc.ruoyu.product.domain.po
+  configuration:
+    map-underscore-to-camel-case: true

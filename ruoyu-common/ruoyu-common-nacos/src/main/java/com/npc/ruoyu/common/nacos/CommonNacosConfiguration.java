@@ -1,6 +1,5 @@
 package com.npc.ruoyu.common.nacos;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,6 +9,5 @@ import org.springframework.context.annotation.Configuration;
  **/
 @Configuration
 @ComponentScan
-@RequiredArgsConstructor
 public class CommonNacosConfiguration {
 }

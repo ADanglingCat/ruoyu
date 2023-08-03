@@ -49,5 +49,9 @@
             <groupId>com.npc</groupId>
             <artifactId>ruoyu-common-redis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.npc</groupId>
+            <artifactId>ruoyu-common-core</artifactId>
+        </dependency>
     </dependencies>
 </project>

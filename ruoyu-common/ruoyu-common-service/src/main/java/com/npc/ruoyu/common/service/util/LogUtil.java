@@ -1,14 +1,9 @@
 package com.npc.ruoyu.common.service.util;
 
-import com.npc.ruoyu.common.service.model.Snowflake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
