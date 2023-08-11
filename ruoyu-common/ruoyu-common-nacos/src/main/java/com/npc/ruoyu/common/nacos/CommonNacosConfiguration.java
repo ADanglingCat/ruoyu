@@ -1,13 +1,13 @@
 package com.npc.ruoyu.common.nacos;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Ted
  * @version 2023/7/24
  **/
-@Configuration
+@AutoConfiguration
 @ComponentScan
 public class CommonNacosConfiguration {
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  **/
 @Repository
 public interface ProductMapper {
-    @Update("update product set product_stock = product_stock - #{productStock}, update_time = #{update_time} where id = #{id}")
+    @Update("update product set product_stock = product_stock - #{productStock}, update_time = #{updateTime} where id = #{id}")
     int updateProductStockById(Product product);
 
     @Select("select * from product where id = #{id}")

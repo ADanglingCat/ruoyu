@@ -22,12 +22,28 @@
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.npc</groupId>
             <artifactId>ruoyu-common-service</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.npc</groupId>
+                    <artifactId>ruoyu-common-datasource</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.npc</groupId>
+                    <artifactId>ruoyu-common-mq</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.npc</groupId>
+                    <artifactId>ruoyu-common-redis</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
