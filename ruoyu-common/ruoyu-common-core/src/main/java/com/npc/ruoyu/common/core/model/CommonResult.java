@@ -53,6 +53,6 @@ public class CommonResult<T> {
     }
 
     public boolean assertSuccess() {
-        return CommonStatus.SUCCESS.getCode().equals(this.code);
+        return CommonStatus.SUCCESS.getCode() == this.code;
     }
 }

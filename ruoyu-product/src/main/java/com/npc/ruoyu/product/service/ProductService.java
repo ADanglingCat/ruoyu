@@ -26,6 +26,6 @@ public class ProductService {
         if (count == 1) {
             return product;
         }
-        throw new CommonException(CommonStatus.CLIENT_ERROR);
+        throw new CommonException(CommonStatus.CLIENT_ERROR.getMsg());
     }
 }

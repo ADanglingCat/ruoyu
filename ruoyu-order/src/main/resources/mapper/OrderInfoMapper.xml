@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.npc.ruoyu.order.dao.OrderInfoMapper">
+<mapper namespace="com.npc.ruoyu.order.dao.OrderInfoDao">
+    <resultMap id="BaseResultMap" type="OrderInfo" autoMapping="true">
+    </resultMap>
+    <resultMap id="OrderVoResultMap" type="OrderVo" extends="BaseResultMap">
+        <collection property="orderInfos" ofType="OrderItem" autoMapping="true"/>
+    </resultMap>
     <insert id="insert" parameterType="OrderInfo" useGeneratedKeys="true" keyProperty="id">
         insert into order_info(user_id, user_name, phone, address, total_price, create_time, update_time) values
         (#{userId}, #{userName}, #{phone}, #{address}, #{totalPrice}, #{createTime}, #{updateTime})
     </insert>
+    <select id="selectById" resultType="OrderInfo">
+        select * from order_info where id = #{id}
+    </select>
+    <select id="selectOrderVoById" resultMap="OrderVoResultMap">
+        select * from order_info oin
+        inner join order_item oit on oin.id = oit.order_info_id
+        where oin.id = #{id}
+    </select>
 </mapper>

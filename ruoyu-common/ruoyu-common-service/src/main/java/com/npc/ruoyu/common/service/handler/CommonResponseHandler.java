@@ -42,14 +42,14 @@ public class CommonResponseHandler implements ResponseBodyAdvice<Object> {
         return CommonResult.success(body);
     }
 
-    @ExceptionHandler(Exception.class)
-    public CommonResult<?> exceptionHandler(Exception e) {
+    @ExceptionHandler(CommonException.class)
+    public CommonResult<?> commonExceptionHandler(CommonException e) {
         LogUtil.error(e);
-        return CommonResult.failure();
+        return CommonResult.failure("自定义异常");
     }
 
-    @ExceptionHandler(CommonException.class)
-    public CommonResult<?> blogExceptionHandler(CommonException e) {
+    @ExceptionHandler(Exception.class)
+    public CommonResult<?> exceptionHandler(Exception e) {
         LogUtil.error(e);
         return CommonResult.failure();
     }

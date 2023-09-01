@@ -9,7 +9,7 @@ public interface ICommonStatus {
      * 各模块自定义状态码
      * @return 状态码
      */
-    Integer getCode();
+    int getCode();
 
     /**
      * 各模块自定义返回信息

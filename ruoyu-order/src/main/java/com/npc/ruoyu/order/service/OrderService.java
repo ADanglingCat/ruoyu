@@ -5,11 +5,12 @@ import com.npc.ruoyu.common.core.model.CommonStatus;
 import com.npc.ruoyu.common.product.api.ProductApi;
 import com.npc.ruoyu.common.product.domain.dto.ProductDto;
 import com.npc.ruoyu.common.service.util.LogUtil;
-import com.npc.ruoyu.order.dao.OrderInfoMapper;
-import com.npc.ruoyu.order.dao.OrderItemMapper;
+import com.npc.ruoyu.order.dao.OrderInfoDao;
+import com.npc.ruoyu.order.dao.OrderItemDao;
 import com.npc.ruoyu.order.domain.dto.OrderDto;
 import com.npc.ruoyu.order.domain.po.OrderInfo;
 import com.npc.ruoyu.order.domain.po.OrderItem;
+import com.npc.ruoyu.order.domain.vo.OrderVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,8 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 @Service
 public class OrderService {
-    private final OrderItemMapper orderItemMapper;
-    private final OrderInfoMapper orderInfoMapper;
+    private final OrderItemDao orderItemDao;
+    private final OrderInfoDao orderInfoDao;
     private final ProductApi productApi;
 
     @Transactional(rollbackFor = Exception.class)
@@ -32,16 +33,16 @@ public class OrderService {
         var productRet = productApi.getProductById(orderDto.getProductId());
         if (!productRet.assertSuccess()) {
             LogUtil.warn("query product failed", orderDto.getProductId());
-            throw new CommonException(CommonStatus.CLIENT_ERROR);
+            throw new CommonException(productRet.getMsg());
         }
         var product = productRet.getData();
         if (product == null) {
             LogUtil.warn("query product empty", orderDto.getProductId());
-            throw new CommonException(CommonStatus.CLIENT_ERROR);
+            throw new CommonException(CommonStatus.CLIENT_ERROR.getMsg());
         }
         if (product.getProductStock() < orderDto.getProductCount()) {
             LogUtil.warn("product stock is less than order count", product.getProductStock(), orderDto.getProductCount());
-            throw new CommonException(CommonStatus.CLIENT_ERROR);
+            throw new CommonException(CommonStatus.CLIENT_ERROR.getMsg());
         }
 
         ProductDto productDto = new ProductDto();
@@ -50,7 +51,7 @@ public class OrderService {
         var updateProductRet = productApi.updateProductStock(productDto);
         if (!updateProductRet.assertSuccess()) {
             LogUtil.warn("update product failed", orderDto.getProductId());
-            throw new CommonException(CommonStatus.CLIENT_ERROR);
+            throw new CommonException(CommonStatus.CLIENT_ERROR.getMsg());
         }
 
         var time = System.currentTimeMillis();
@@ -62,10 +63,10 @@ public class OrderService {
         orderInfo.setTotalPrice(BigDecimal.ONE);
         orderInfo.setCreateTime(time);
         orderInfo.setUpdateTime(time);
-        var orderInfoRet = orderInfoMapper.insert(orderInfo);
+        var orderInfoRet = orderInfoDao.insert(orderInfo);
         if (orderInfoRet != 1) {
             LogUtil.warn("update order info failed", orderDto.getProductId());
-            throw new CommonException(CommonStatus.CLIENT_ERROR);
+            throw new CommonException(CommonStatus.CLIENT_ERROR.getMsg());
         }
         OrderItem orderItem = new OrderItem();
         orderItem.setOrderInfoId(orderInfo.getId());
@@ -75,10 +76,14 @@ public class OrderService {
         orderItem.setProductCount(orderDto.getProductCount());
         orderItem.setCreateTime(time);
         orderItem.setUpdateTime(time);
-        var orderItemRet = orderItemMapper.insert(orderItem);
+        var orderItemRet = orderItemDao.insert(orderItem);
         if (orderItemRet != 1) {
             LogUtil.warn("update order item failed", orderDto.getProductId());
-            throw new CommonException(CommonStatus.CLIENT_ERROR);
+            throw new CommonException(CommonStatus.CLIENT_ERROR.getMsg());
         }
+    }
+
+    public OrderVo getOrderById(long orderId) {
+        return orderInfoDao.selectOrderVoById(orderId);
     }
 }

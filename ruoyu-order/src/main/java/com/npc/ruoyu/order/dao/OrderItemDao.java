@@ -1,6 +1,6 @@
 package com.npc.ruoyu.order.dao;
 
-import com.npc.ruoyu.order.domain.po.OrderInfo;
+import com.npc.ruoyu.order.domain.po.OrderItem;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
  * @since 2023/8/1
  **/
 @Repository
-public interface OrderInfoMapper {
-    int insert(OrderInfo orderInfo);
+public interface OrderItemDao {
+    int insert(OrderItem orderItem);
 }

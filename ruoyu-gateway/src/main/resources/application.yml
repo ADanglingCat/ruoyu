@@ -14,6 +14,10 @@ spring:
         server-addr: ${spring.cloud.nacos.config.server-addr}
         namespace: ${spring.cloud.nacos.config.namespace}
     sentinel:
+      transport:
+        port: 8890
+        dashboard: 127.0.0.1:8858
+      eager: true
       filter:
         enabled: false #网关限流需要关闭
     gateway:

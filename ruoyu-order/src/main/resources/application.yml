@@ -26,8 +26,24 @@ spring:
           enabled: true
     sentinel:
       transport:
-        port: 8719
-        dashboard: 8858
+        port: 8891
+        dashboard: 127.0.0.1:8858
+      eager: true
+      datasource:
+        ds-flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            namespace: ${spring.cloud.nacos.config.namespace}
+            dataId: ${spring.application.name}-flow
+            data_type: json
+            rule-type: flow
+        ds-degrade:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            namespace: ${spring.cloud.nacos.config.namespace}
+            dataId: ${spring.application.name}-degrade
+            data_type: json
+            rule-type: degrade
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/ruoyu_order?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8&autoReconnect=true&useSSL=false&allowMultiQueries=true
     username: root
@@ -50,11 +66,12 @@ spring:
       - nacos:${spring.application.name}.yml
       - nacos:common-service.yml
 
-mybatis:
-  mapper-locations: classpath:mapper/*Mapper.xml
-  type-aliases-package: com.npc.ruoyu.order.domain.po
-  configuration:
-    map-underscore-to-camel-case: true
+# 开启feign熔断降级
 feign:
   sentinel:
     enabled: true
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.npc.ruoyu.order.domain
+  configuration:
+    map-underscore-to-camel-case: true
