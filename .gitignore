@@ -33,3 +33,6 @@ build/
 .vscode/
 
 logs/
+
+config/docker/log/
+config/docker/data/

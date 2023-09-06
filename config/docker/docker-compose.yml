@@ -1,0 +1,201 @@
+version: '3.8'
+
+services:
+  skywalking-ui:
+    image: apache/skywalking-ui:9.6.0-java17
+    ports:
+      - "8868:8080"
+    volumes:
+      - ./conf/skywalking/webapp:/skywalking/webapp
+    depends_on:
+      - skywalking-oap
+    environment:
+      SW_OAP_ADDRESS: http://skywalking-oap:12800
+      TZ: Asia/Shanghai
+
+  skywalking-oap:
+    image: apache/skywalking-oap-server:9.6.0-java17
+    depends_on:
+      - elasticsearch
+    ports:
+      - "12800:12800"
+      - "11800:11800"
+    volumes:
+      - ./conf/skywalking/oap:/skywalking/config
+      - ./log/skywalking/oap:/skywalking/logs
+    environment:
+      SW_CLUSTER: nacos
+      SW_CLUSTER_NACOS_HOST_PORT: nacos:8848
+      SW_CLUSTER_NACOS_NAMESPACE: ruoyu
+      SW_CLUSTER_NACOS_USERNAME: ""
+      SW_CLUSTER_NACOS_SECRETKEY: ""
+      SW_STORAGE: elasticsearch
+      SW_STORAGE_ES_CLUSTER_NODES: elasticsearch:9200
+      SW_ES_USER: elasticsearch
+      SW_ES_PASSWORD: elasticsearch
+      SW_NAMESPACE: elasticsearch
+      TZ: Asia/Shanghai      
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./conf/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+      - ./conf/elasticsearch/config:/usr/share/elasticsearch/config
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      cluster.name: elasticsearch
+      bootstrap.memory_lock: true
+      TZ: Asia/Shanghai
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.5.3
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+    volumes:
+      - ./conf/kibana:/usr/share/kibana/conf
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      I18N_LOCALE: zh-CN
+      TZ: Asia/Shanghai
+
+  logstash:
+    image: logstash:8.5.3
+    depends_on:
+      - elasticsearch
+    ports:
+      - "4560:4560"
+      - "5044:5044"
+    volumes:
+      - ./conf/logstash:/usr/share/logstash/pipeline
+    environment:
+      TZ: Asia/Shanghai
+
+  rocketmq-namesrv:
+    image: apache/rocketmq:5.1.3
+    ports:
+      - "9876:9876"
+    volumes:
+      - ./log/rocketmq:/opt/rocketmq/logs
+      - ./data/rocketmq:/opt/rocketmq/store
+    environment:
+      JAVA_OPT_EXT: "-server -Xms512m -Xmx512m -Xmn256m"
+      TZ: Asia/Shanghai
+    command: sh mqnamesrv
+
+  rocketmq-broker:
+    image: apache/rocketmq:5.1.3
+    ports:
+      - "10909:10909"
+      - "10911:10911"
+      - "10912:10912"
+    volumes:
+      - ./log/rocketmq:/opt/rocketmq/logs
+      - ./data/rocketmq:/opt/rocketmq/store
+      - ./conf/rocketmq:/opt/rocketmq/conf
+    environment:
+      NAMESRV_ADDR: "rocketmq-namesrv:9876"
+      JAVA_OPT_EXT: "-server -Xms512m -Xmx512m -Xmn256m"
+      TZ: Asia/Shanghai
+    command: sh mqbroker -c ../conf/broker.conf
+    depends_on:
+      - rocketmq-namesrv
+
+  rocketmq-dashboard:
+    image: apacherocketmq/rocketmq-dashboard:latest
+    depends_on:
+      - rocketmq-namesrv
+    ports:
+      - "8081:8080"
+    environment:
+      JAVA_OPTS: "-Drocketmq.namesrv.addr=rocketmq-namesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
+      TZ: Asia/Shanghai
+    volumes:
+      - ./data/rocketmq:/home/rocketmq-console/data
+      
+  mysql:
+    image: mysql:8.1.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Shanghai
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+  redis:
+    image: redis:6.0
+    ports: 
+      - "6379:6379"
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./conf/redis:/etc/redis
+      - ./data/redis:/data
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./conf/nginx:/etc/nginx
+      - ./log/nginx:/var/log/nginx
+      - ./data/nginx:/usr/share/nginx/html
+  
+  seata:
+    image: seataio/seata-server:1.7.0
+    ports:
+      - "7091:7091"
+      - "9091:8091"
+    volumes:
+      - ./conf/seata:/seata-server/resources
+    environment:
+      STORE_MODE: db
+      TZ: Asia/Shanghai
+      SEATA_IP: 127.0.0.1
+      SEATA_PORT: 8091
+  
+  nacos:
+    image: nacos/nacos-server:v2.2.3
+    depends_on:
+      - mysql
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "7848:7848"
+    volumes:
+      - ./conf/nacos:/home/nacos/conf
+      - ./log/nacos:/home/nacos/logs
+    environment:
+      TZ: Asia/Shanghai
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_DB_NAME: ruoyu_nacos
+      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root
+  
+  sentinel:
+    build:
+      context: ./conf/sentinel
+      dockerfile: Dockerfile
+    ports:
+      - "8858:8858"
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./log/sentinel:/root/logs/csp
+      - ./conf/sentinel:/app

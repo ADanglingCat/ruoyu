@@ -53,5 +53,10 @@
             <groupId>com.npc</groupId>
             <artifactId>ruoyu-common-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-toolkit-logback-1.x</artifactId>
+            <version>8.16.0</version>
+        </dependency>
     </dependencies>
 </project>
