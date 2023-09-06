@@ -1,0 +1,16 @@
+#
+# ** THIS IS AN AUTO-GENERATED FILE **
+#
+
+# Default Kibana configuration for docker target
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+monitoring.ui.container.elasticsearch.enabled: true
+
+
+# This section was automatically generated during setup.
+elasticsearch.hosts: ['http://elasticsearch:9200']
+elasticsearch.serviceAccountToken: AAEAAWVsYXN0aWMva2liYW5hL2Vucm9sbC1wcm9jZXNzLXRva2VuLTE2OTM5Njk3NDAxNjQ6aEpsWGhneGtTb1dMX0NtVUl3c0FyQQ
+elasticsearch.ssl.certificateAuthorities: [/usr/share/kibana/data/ca_1693969742701.crt]
+xpack.fleet.outputs: [{id: fleet-default-output, name: default, is_default: true, is_default_monitoring: true, type: elasticsearch, hosts: ['https://192.168.167.7:9200'], ca_trusted_fingerprint: c15e8d8de61210738a4c55a710f8eac33d8457b956ad9b01b3a6c63599570d3a}]
+

@@ -31,7 +31,7 @@ services:
       SW_CLUSTER_NACOS_SECRETKEY: ""
       SW_STORAGE: elasticsearch
       SW_STORAGE_ES_CLUSTER_NODES: elasticsearch:9200
-      SW_ES_USER: elasticsearch
+      SW_ES_USER: elastic
       SW_ES_PASSWORD: elasticsearch
       SW_NAMESPACE: elasticsearch
       TZ: Asia/Shanghai      
@@ -63,9 +63,9 @@ services:
     ports:
       - "5601:5601"
     volumes:
-      - ./conf/kibana:/usr/share/kibana/conf
+      - ./conf/kibana:/usr/share/kibana/config
+      - ./data/kibana:/usr/share/kibana/data
     environment:
-      ELASTICSEARCH_URL: http://elasticsearch:9200
       I18N_LOCALE: zh-CN
       TZ: Asia/Shanghai
 
@@ -74,8 +74,9 @@ services:
     depends_on:
       - elasticsearch
     ports:
-      - "4560:4560"
       - "5044:5044"
+      - "50000:50000"
+      - "9600:9600"
     volumes:
       - ./conf/logstash:/usr/share/logstash/pipeline
     environment:
